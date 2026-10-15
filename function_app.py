@@ -29,7 +29,7 @@ def extract_chamado(myTimer: func.TimerRequest) -> None:
 
     try:
         # Estabelece a conexão
-        conn = pyodbc.connect(conn_str)
+        conn = pyoodbc.connect(conn_str)
 
         logging.info("Conexão com o banco estabelecida com sucesso.")
 
