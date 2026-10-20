@@ -9,5 +9,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: python3 --version
-      - run: python3 -m py_compile function_app.py
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instalar ferramentas
+        run: pip install ruff black isort
+
+      - name: Linting
+        run: ruff check function_app.py
+
+      - name: Formatação
+        run: black --check function_app.py
+
+      - name: Verificação de imports
+        run: isort --check-only function_app.py
+
+      - name: Verificar sintaxe Python
+        run: python -m py_compile function_app.py
