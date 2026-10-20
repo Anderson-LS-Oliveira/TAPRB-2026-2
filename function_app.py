@@ -1,8 +1,11 @@
+
 import logging
 import os
 
 import azure.functions as func
 import pyodbc
+
+logger = logging.getLogger(__name__)
 
 app = func.FunctionApp()
 
@@ -35,7 +38,7 @@ def extract_chamado(myTimer: func.TimerRequest) -> None:
         # Estabelece a conexão
         conn = pyodbc.connect(conn_str)
 
-        logging.info("Conexão com o banco estabelecida com sucesso.")
+        logger.info("Conexão com o banco estabelecida com sucesso.")
 
         # Cria o cursor
         cursor = conn.cursor()
@@ -53,14 +56,14 @@ def extract_chamado(myTimer: func.TimerRequest) -> None:
 
         # Exibe os resultados no log
         for row in rows:
-            logging.info("%s", row)
+            logger.info("%s", row)
 
         # Fecha cursor e conexão
         cursor.close()
         conn.close()
 
-        logging.info("Total de registros encontrados: %s", len(rows))
+        logger.info("Total de registros encontrados: %s", len(rows))
 
     except pyodbc.Error:
-        logging.exception("Erro no banco de dados.")
+        logger.exception("Erro no banco de dados.")
         raise
