@@ -1,21 +1,25 @@
 import logging
-import azure.functions as func
 import os
+
+import azure.functions as func
 import pyodbc
 
 app = func.FunctionApp()
 
-@app.timer_trigger(schedule="0 * * * * *", arg_name="myTimer", run_on_startup=False,
-              use_monitor=False) 
-def extract_chamado(myTimer: func.TimerRequest) -> None:
 
+@app.timer_trigger(
+    schedule="0 * * * * *",
+    arg_name="myTimer",
+    run_on_startup=False,
+    use_monitor=False,
+)
+def extract_chamado(myTimer: func.TimerRequest) -> None:
     host = os.getenv("HOST")
     database = os.getenv("DATABASE")
     user = os.getenv("USER")
     password = os.getenv("PASSWORD")
 
-
-    #criar a conexao com o banco de dados
+    # Criar a conexão com o banco de dados
     conn_str = (
         "DRIVER={ODBC Driver 18 for SQL Server};"
         f"SERVER={host};"
@@ -29,7 +33,7 @@ def extract_chamado(myTimer: func.TimerRequest) -> None:
 
     try:
         # Estabelece a conexão
-        conn = pyoodbc.connect(conn_str)
+        conn = pyodbc.connect(conn_str)
 
         logging.info("Conexão com o banco estabelecida com sucesso.")
 
@@ -49,14 +53,14 @@ def extract_chamado(myTimer: func.TimerRequest) -> None:
 
         # Exibe os resultados no log
         for row in rows:
-            logging.info(row)
+            logging.info("%s", row)
 
         # Fecha cursor e conexão
         cursor.close()
         conn.close()
 
-        logging.info(f"Total de registros encontrados: {len(rows)}")
+        logging.info("Total de registros encontrados: %s", len(rows))
 
-    except pyodbc.Error as e:
-        logging.error(f"Erro no banco de dados: {e}")
+    except pyodbc.Error:
+        logging.exception("Erro no banco de dados.")
         raise
